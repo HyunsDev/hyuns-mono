@@ -1,0 +1,81 @@
+import { Id } from '@workspace/primitive';
+
+export interface AbstractEntityProps<TId extends Id> {
+  id: TId;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface AbstractCreateEntityProps<T, TId extends Id> {
+  id: TId;
+  props: T;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export abstract class AbstractEntity<TProps, TId extends Id> {
+  protected _id: TId;
+  protected readonly props: TProps;
+  protected readonly _createdAt: Date;
+  protected _updatedAt: Date;
+
+  constructor({ id, props, createdAt, updatedAt }: AbstractCreateEntityProps<TProps, TId>) {
+    this._id = id;
+    const now = new Date();
+    this._createdAt = createdAt || now;
+    this._updatedAt = updatedAt || now;
+    this.props = props;
+
+    this.validate();
+  }
+
+  get id(): TId {
+    return this._id;
+  }
+
+  get createdAt(): Date {
+    return this._createdAt;
+  }
+
+  get updatedAt(): Date {
+    return this._updatedAt;
+  }
+
+  getProps(): TProps & AbstractEntityProps<TId> {
+    const propsCopy = {
+      id: this._id,
+      createdAt: this._createdAt,
+      updatedAt: this._updatedAt,
+      ...this.props,
+    };
+    return Object.freeze(propsCopy);
+  }
+
+  equals(object?: AbstractEntity<TProps, TId>): boolean {
+    if (object === null || object === undefined) {
+      return false;
+    }
+    if (this === object) {
+      return true;
+    }
+    if (!AbstractEntity.isEntity(object)) {
+      return false;
+    }
+    return this.id ? this.id === object.id : false;
+  }
+
+  static isEntity(entity: unknown): entity is AbstractEntity<unknown, Id> {
+    return entity instanceof AbstractEntity;
+  }
+
+  abstract validate(): void;
+
+  static reconstruct<TProps, TId extends Id, TEntity extends AbstractEntity<TProps, TId>>(
+    this: { prototype: TEntity },
+    props: TProps,
+  ): TEntity {
+    const ctor = this as unknown as new (props: TProps) => TEntity;
+    const instance = new ctor(props);
+    return instance;
+  }
+}

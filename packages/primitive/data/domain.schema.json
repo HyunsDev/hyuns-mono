@@ -1,0 +1,60 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "System Architecture Schema",
+  "type": "object",
+  "required": ["version", "updatedAt"],
+  "properties": {
+    "version": {
+      "type": "number",
+      "description": "문서의 버전 (예: 1.0)"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date",
+      "description": "최종 수정일 (YYYY-MM-DD)"
+    },
+    "business": {
+      "$ref": "#/definitions/domainMap",
+      "description": "비즈니스 로직과 관련된 도메인 그룹"
+    },
+    "platform": {
+      "$ref": "#/definitions/domainMap",
+      "description": "인프라 및 시스템 플랫폼과 관련된 도메인 그룹"
+    }
+  },
+  "definitions": {
+    "domainMap": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["components"],
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "components": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/definitions/component"
+            }
+          }
+        }
+      }
+    },
+    "component": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["aggregate", "domain_service", "platform_service", "gateway", "runtime"],
+          "description": "컴포넌트의 유형"
+        },
+        "description": {
+          "type": "string",
+          "description": "컴포넌트에 대한 설명"
+        }
+      }
+    }
+  }
+}

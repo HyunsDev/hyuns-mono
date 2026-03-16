@@ -1,0 +1,45 @@
+{
+  "name": "@workspace/jest-config",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "exports": {
+    ".": {
+      "types": "./dist/entry.d.ts",
+      "import": "./dist/entry.js",
+      "require": "./dist/entry.js"
+    },
+    "./base": {
+      "types": "./dist/base.d.ts",
+      "import": "./dist/base.js",
+      "require": "./dist/base.js"
+    },
+    "./nest": {
+      "types": "./dist/nest.d.ts",
+      "import": "./dist/nest.js",
+      "require": "./dist/nest.js"
+    },
+    "./next": {
+      "types": "./dist/next.d.ts",
+      "import": "./dist/next.js",
+      "require": "./dist/next.js"
+    }
+  },
+  "main": "./dist/entry.js",
+  "types": "./dist/entry.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "typescript": "^5.9.3"
+  },
+  "devDependencies": {
+    "@jest/types": "^30.2.0",
+    "@types/node": "^24.10.3",
+    "jest": "^30.2.0",
+    "next": "^16.0.10"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

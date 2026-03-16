@@ -1,0 +1,32 @@
+module.exports = {
+  extends: ['@commitlint/config-conventional'],
+  rules: {
+    'scope-empty': [0],
+    'scope-enum': [
+      2,
+      'always',
+      [
+        'api',
+        'api-e2e',
+        'web',
+        'web-dev',
+        'be-common',
+        'be-core',
+        'ddd',
+        'be-infra',
+        'shared',
+        'contract',
+        'database',
+        'eslint',
+        'jest',
+        'typescript',
+        'infra',
+        'ui',
+        'ydoc',
+        'primitive',
+        'rest-builder',
+      ],
+    ],
+    'subject-case': [0],
+  },
+};

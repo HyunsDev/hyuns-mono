@@ -1,0 +1,90 @@
+# yaml-language-server: $schema=./domain.schema.json
+
+version: 1.0
+updatedAt: 2026-03-16
+business:
+  "account":
+    description: "사용자 계정 및 인증 관리"
+    components:
+      "user":
+        type: aggregate
+      "auth":
+        type: domain_service
+      "user_notification":
+        type: aggregate
+  "operation":
+    description: "운영 지원 관리" 
+    components:
+      "config":
+        type: aggregate
+      "notice":
+        type: aggregate
+      "audit_log":
+        type: aggregate
+      "short_link":
+        type: aggregate
+platform:
+  "system":
+    components:
+      "initialize":
+        type: runtime
+      "shutdown":
+        type: runtime
+      "trigger":
+        type: runtime
+      "exception":
+        type: runtime
+  "persistence":
+    components:
+      "database":
+        type: gateway
+        description: "메인 데이터베이스"
+      "store":
+        type: gateway
+        description: "인메모리 데이터 저장소"
+      "cache":
+        type: gateway
+        description: "캐시 스토어"
+      "pubsub":
+        type: gateway
+        description: "Pub/Sub 메시징 시스템"
+      "task_queue":
+        type: gateway
+        description: "태스크 큐 시스템"
+  "storage":
+    components:
+      "storage":
+        type: platform_service
+        description: "파일 업로드/다운로드 서비스"
+      "internal_storage":
+        type: gateway
+        description: "내부용 파일 스토리지"
+      "private_storage":
+        type: gateway
+        description: "비공개 파일 스토리지"
+      "public_storage":
+        type: gateway
+        description: "공개용 파일 스토리지"
+  "notification":
+    components:
+      "email":
+        type: gateway
+        description: "이메일 전송 서비스"
+      "push":
+        type: gateway
+        description: "푸시 알림 서비스"
+      "discord_webhook":
+        type: gateway
+        description: "디스코드 웹훅 알림 서비스"
+      "user_notification":
+        type: gateway
+        description: "인앱 알림 서비스"
+      "sse":
+        type: gateway
+        description: "이벤트 알림 서비스"
+  "dev":
+    components:
+      "devtools":
+        type: runtime
+      "test":
+        type: runtime
