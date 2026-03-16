@@ -1,4 +1,5 @@
 import { uniqueDeepMerge } from '@workspace/shared';
+
 import { CommonApiErrors } from './common.errors';
 
 export const ApiErrors = uniqueDeepMerge(CommonApiErrors);

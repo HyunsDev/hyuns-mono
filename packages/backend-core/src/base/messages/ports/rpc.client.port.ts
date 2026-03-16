@@ -1,9 +1,0 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-import { MessageResult } from '@workspace/backend-ddd';
-
-import { BaseRpc } from '../base.rpc';
-
-export abstract class RpcClientPort {
-  abstract send<C extends BaseRpc<any, any, any>>(rpc: C): Promise<MessageResult<C>>;
-}
