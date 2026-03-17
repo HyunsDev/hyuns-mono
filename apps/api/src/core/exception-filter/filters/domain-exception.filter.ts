@@ -51,7 +51,9 @@ export class DomainExceptionFilter implements ExceptionFilter<DomainException> {
       }
 
       this.logger.error({
-        msg: `Unexpected error in DomainExceptionFilter: ${error?.code}`,
+        msg: `Unexpected error in DomainExceptionFilter: ${
+          err instanceof Error ? err.message : error?.code
+        }`,
         error: err,
       });
       const response = apiErr(ApiErrors.InternalServerError, {});

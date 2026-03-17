@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { Injectable } from '@nestjs/common';
 
 import { AccessDeniedError, DomainException, PrismaService, S3Service, SessionService } from '@workspace/backend-core';
-import { ApiErrors, UserRole, UserStatus } from '@workspace/contract';
+import { ApiErrors, SessionDetailDto, UserRole, UserStatus } from '@workspace/contract';
 
 const MAX_IMAGE_FILE_SIZE_BYTES = 5 * 1024 * 1024;
 
@@ -30,6 +30,25 @@ export class MeService {
 
   async getCurrentUser(userId: string) {
     return this.getActiveUserOrThrow(userId);
+  }
+
+  async listSessions(userId: string, currentSessionId: string) {
+    await this.getActiveUserOrThrow(userId);
+
+    const sessions = await this.sessionService.listUserSessions(userId);
+
+    return sessions.map((session) => {
+      return {
+        sessionId: session.sessionId,
+        userId: session.userId,
+        name: session.name,
+        os: session.os,
+        device: session.device,
+        userAgent: session.userAgent,
+        createdAt: session.createdAt,
+        isCurrent: session.sessionId === currentSessionId,
+      } satisfies SessionDetailDto;
+    });
   }
 
   async updateProfile(userId: string, name?: string) {
@@ -118,6 +137,24 @@ export class MeService {
     await this.sessionService.revokeUserSessions(userId);
 
     return { user: deletedUser } as const;
+  }
+
+  async deleteSession(userId: string, currentSessionId: string, targetSessionId: string) {
+    await this.getActiveUserOrThrow(userId);
+
+    if (targetSessionId === currentSessionId) {
+      return { error: ApiErrors.CurrentSessionCannotBeDeleted } as const;
+    }
+
+    const deleted = await this.sessionService.revokeUserSession(userId, targetSessionId);
+
+    if (!deleted) {
+      return { error: ApiErrors.SessionNotFound } as const;
+    }
+
+    return {
+      success: true as const,
+    };
   }
 
   private async getActiveUserOrThrow(userId: string) {

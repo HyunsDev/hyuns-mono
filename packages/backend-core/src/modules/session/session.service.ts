@@ -68,6 +68,38 @@ export class SessionService {
     return this.getSession(sessionId);
   }
 
+  async listUserSessions(userId: string) {
+    const indexKey = this.getUserSessionsKey(userId);
+    const sessionIds = await this.redis.smembers(indexKey);
+
+    if (sessionIds.length === 0) {
+      return [];
+    }
+
+    const sessions = await Promise.all(sessionIds.map((sessionId) => this.getSession(sessionId)));
+    const staleSessionIds: string[] = [];
+    const activeSessions: SessionRecord[] = [];
+
+    sessions.forEach((session, index) => {
+      const sessionId = sessionIds[index];
+
+      if (!session || session.userId !== userId) {
+        if (sessionId) {
+          staleSessionIds.push(sessionId);
+        }
+        return;
+      }
+
+      activeSessions.push(session);
+    });
+
+    if (staleSessionIds.length > 0) {
+      await this.redis.srem(indexKey, ...staleSessionIds);
+    }
+
+    return activeSessions.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  }
+
   async revokeSession(sessionId: string) {
     const session = await this.getSession(sessionId);
 
@@ -76,6 +108,24 @@ export class SessionService {
     if (session) {
       await this.redis.srem(this.getUserSessionsKey(session.userId), sessionId);
     }
+  }
+
+  async revokeUserSession(userId: string, sessionId: string) {
+    const session = await this.getSession(sessionId);
+
+    if (!session) {
+      await this.redis.srem(this.getUserSessionsKey(userId), sessionId);
+      return false;
+    }
+
+    if (session.userId !== userId) {
+      return false;
+    }
+
+    await this.redis.del(this.getSessionKey(sessionId));
+    await this.redis.srem(this.getUserSessionsKey(userId), sessionId);
+
+    return true;
   }
 
   async revokeUserSessions(userId: string) {

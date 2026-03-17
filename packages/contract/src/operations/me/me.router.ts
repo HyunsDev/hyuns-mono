@@ -4,7 +4,7 @@ import { createErrorResponseSchemas, createOkResponseSchema } from '@workspace/s
 
 import { c } from '@/internal';
 import { ApiErrors } from '@/resources';
-import { UserBaseSchema, UserDtoSchema, UserRole } from '@/resources/account';
+import { SessionDetailDtoSchema, UserBaseSchema, UserDtoSchema, UserRole } from '@/resources/account';
 
 export const MeRouter = c.router({
   get: c.query({
@@ -72,5 +72,47 @@ export const MeRouter = c.router({
     metadata: {
       roles: [UserRole.User, UserRole.Admin],
     },
+  }),
+
+  sessions: c.router({
+    list: c.query({
+      summary: '로그인한 유저의 활성 세션 목록을 가져옵니다',
+      description: 'Returns the active sessions of the currently authenticated user.',
+      method: 'GET',
+      path: '/me/sessions',
+      responses: {
+        ...createOkResponseSchema({
+          data: z.array(SessionDetailDtoSchema),
+        }),
+      },
+      metadata: {
+        roles: [UserRole.User, UserRole.Admin],
+      },
+    }),
+
+    delete: c.mutation({
+      summary: '로그인한 유저의 특정 세션을 종료합니다',
+      description: 'Deletes a specific active session of the currently authenticated user.',
+      method: 'DELETE',
+      path: '/me/sessions/:sessionId',
+      pathParams: z.object({
+        sessionId: z.uuid(),
+      }),
+      body: c.noBody(),
+      responses: {
+        ...createOkResponseSchema({
+          data: z.object({
+            success: z.literal(true),
+          }),
+        }),
+        ...createErrorResponseSchemas([
+          ApiErrors.SessionNotFound,
+          ApiErrors.CurrentSessionCannotBeDeleted,
+        ]),
+      },
+      metadata: {
+        roles: [UserRole.User, UserRole.Admin],
+      },
+    }),
   }),
 });

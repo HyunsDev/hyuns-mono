@@ -3,15 +3,14 @@ import z from 'zod';
 import { UserRoleSchema } from '../user';
 
 export const SessionBaseSchema = z.object({
-  id: z.uuid(),
+  sessionId: z.uuid(),
   userId: z.uuid(),
   name: z.string(),
   os: z.string(),
   device: z.string(),
   userAgent: z.string(),
-  isRevoked: z.boolean(),
-  revokedAt: z.iso.datetime().nullable(),
   createdAt: z.iso.datetime(),
+  isCurrent: z.boolean(),
 });
 export type SessionBase = z.infer<typeof SessionBaseSchema>;
 
