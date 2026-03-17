@@ -42,6 +42,7 @@ export const MeRouter = c.router({
     description: 'Updates the avatar of the currently authenticated user.',
     method: 'PUT',
     path: '/me/avatar',
+    contentType: 'multipart/form-data',
     body: z.object({
       file: z.custom<File>(),
     }),

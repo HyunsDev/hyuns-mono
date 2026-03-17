@@ -18,6 +18,8 @@ model User {
     role      UserRole   @default(user)
     status    UserStatus @default(active)
     avatarUrl String?
+    deletedAt DateTime?
+    adminMemo String?
     createdAt DateTime   @default(now())
     updatedAt DateTime   @updatedAt
 

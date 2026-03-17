@@ -1,8 +1,10 @@
+import { LoggerService } from '@nestjs/common';
 import fastifyCookie from '@fastify/cookie'; // 쿠키 플러그인 변경
 import helmet from '@fastify/helmet';
+import fastifyMultipart from '@fastify/multipart';
 import fastifyRateLimit from '@fastify/rate-limit';
 import { NestFastifyApplication } from '@nestjs/platform-fastify'; // 타입 변경
-import { Logger, LoggerErrorInterceptor } from 'nestjs-pino';
+import { Logger as PinoLogger, LoggerErrorInterceptor } from 'nestjs-pino';
 
 import { ApiError } from '@workspace/shared';
 
@@ -14,9 +16,18 @@ export interface BootstrapOptions {
 
 export async function setupHttpApp(app: NestFastifyApplication, options: BootstrapOptions = {}) {
   // Logger
-  const logger = app.get(Logger);
-  app.useLogger(logger);
-  app.flushLogs();
+  let logger: LoggerService | null = null;
+
+  try {
+    logger = app.get(PinoLogger, { strict: false });
+  } catch {
+    logger = null;
+  }
+
+  if (logger) {
+    app.useLogger(logger);
+    app.flushLogs();
+  }
 
   // Global Interceptors
   app.useGlobalInterceptors(new LoggerErrorInterceptor());
@@ -65,6 +76,15 @@ export async function setupHttpApp(app: NestFastifyApplication, options: Bootstr
   // Cookie
   await app.register(fastifyCookie, {
     secret: config.cookieSecret,
+  });
+
+  // Multipart
+  await app.register(fastifyMultipart, {
+    attachFieldsToBody: true,
+    limits: {
+      fileSize: 5 * 1024 * 1024,
+      files: 1,
+    },
   });
 
   // Graceful Shutdown

@@ -1,22 +1,23 @@
 import { Global, Module } from '@nestjs/common';
+import { TsRestModule } from '@ts-rest/nest';
 
 import {
-  ConfigModule,
-  PrismaModule,
-  CacheModule,
-  httpConfig,
-  prismaConfig,
-  redisConfig,
-  ssmConfig,
+  AccessControlModule,
   ContextModule,
-  mailerConfig,
+  ConfigModule,
+  httpConfig,
+  LoggingModule,
+  PrismaModule,
+  prismaConfig,
   RedisModule,
+  redisConfig,
+  S3Module,
+  s3Config,
+  SessionModule,
+  sessionConfig,
 } from '@workspace/backend-core';
 
-import { discordWebhookConfig } from './configs';
 import { googleOAuthConfig } from './configs';
-import { publicAssetConfig } from './configs';
-import { refreshTokenConfig } from './configs/refresh-token.config';
 import { ExceptionFilterModule } from './exception-filter/exception-filter.module';
 
 @Global()
@@ -27,24 +28,26 @@ import { ExceptionFilterModule } from './exception-filter/exception-filter.modul
         httpConfig,
         prismaConfig,
         redisConfig,
-        ssmConfig,
-        mailerConfig,
-
-        refreshTokenConfig,
+        sessionConfig,
+        s3Config,
         googleOAuthConfig,
-        publicAssetConfig,
-        discordWebhookConfig,
       ],
+    }),
+    TsRestModule.register({
+      validateResponses: true,
     }),
     ContextModule.forRoot({
       enableDatabase: true,
       type: 'http',
     }),
+    LoggingModule,
     PrismaModule,
     RedisModule,
-    CacheModule,
+    SessionModule,
+    AccessControlModule,
+    S3Module,
     ExceptionFilterModule,
   ],
-  exports: [ContextModule, PrismaModule],
+  exports: [ContextModule, PrismaModule, SessionModule, S3Module],
 })
 export class CoreModule {}

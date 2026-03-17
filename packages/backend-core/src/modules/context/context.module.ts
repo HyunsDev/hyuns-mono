@@ -13,7 +13,7 @@ import { ClsPluginTransactional } from '@nestjs-cls/transactional';
 import { TransactionalAdapterPrisma } from '@nestjs-cls/transactional-adapter-prisma';
 import { ClsModule, ClsPlugin } from 'nestjs-cls';
 
-import { ClientContext, CoreContext, TransactionContext } from './contexts';
+import { ClientContext, CoreContext, SessionContext, TransactionContext } from './contexts';
 import { HttpApiErrorLoggingInterceptor } from './interceptors/http-api-error-logging.interceptor';
 import { ContextMiddleware } from './middlewares/context.middleware';
 import { TransactionManager } from './transaction.manager';
@@ -53,13 +53,14 @@ export class ContextModule implements NestModule {
     const providers: Provider[] = [
       ClientContext,
       CoreContext,
+      SessionContext,
       {
         provide: CONTEXT_MODULE_OPTIONS,
         useValue: options,
       },
     ];
 
-    const exports: Provider[] = [ClientContext, CoreContext, ClsModule];
+    const exports: Provider[] = [ClientContext, CoreContext, SessionContext, ClsModule];
 
     // 2. HTTP 전용 Interceptor 추가
     if (type === 'http') {
