@@ -1,0 +1,48 @@
+enum UserRole {
+    guest
+    bot
+    user
+    admin
+}
+
+model User {
+    id        String   @id @default(uuid()) @db.Uuid
+    email     String   @unique
+    name      String
+    role      UserRole @default(user)
+    avatarUrl String?
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    personalAccessTokens PersonalAccessToken[]
+    authProviders        AuthProvider[]
+}
+
+model PersonalAccessToken {
+    id        String @id @default(uuid()) @db.Uuid
+    tokenHash String @unique
+    userId    String @db.Uuid
+    user      User   @relation(fields: [userId], references: [id])
+
+    name        String
+    description String?
+
+    lastUsedAt DateTime?
+    expireAt   DateTime?
+    revoked    Boolean   @default(false)
+    revokedAt  DateTime?
+    createdAt  DateTime  @default(now())
+}
+
+model AuthProvider {
+    id     String @id @default(uuid()) @db.Uuid
+    userId String @db.Uuid
+    user   User   @relation(fields: [userId], references: [id])
+
+    provider   String // "google", "github"
+    providerId String
+
+    createdAt DateTime @default(now())
+
+    @@unique([provider, providerId])
+}

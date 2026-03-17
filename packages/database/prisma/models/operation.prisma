@@ -1,0 +1,11 @@
+model AuditLog {
+    id String @id @default(uuid()) @db.Uuid
+
+    userId String? @db.Uuid
+    action String // "login", "create_pat", "delete_note"
+
+    ip        String?
+    userAgent String?
+
+    createdAt DateTime @default(now())
+}
