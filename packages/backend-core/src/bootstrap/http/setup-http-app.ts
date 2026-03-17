@@ -6,7 +6,7 @@ import { Logger, LoggerErrorInterceptor } from 'nestjs-pino';
 
 import { ApiError } from '@workspace/shared';
 
-import { httpConfig, HttpConfig } from '@/modules/foundation/config';
+import { httpConfig, HttpConfig } from '@/modules/config';
 
 export interface BootstrapOptions {
   enableCors?: boolean;

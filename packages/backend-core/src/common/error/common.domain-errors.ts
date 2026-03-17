@@ -3,7 +3,6 @@ import { ValidationDetails } from '@workspace/shared';
 
 import {
   BaseAccessDeniedError,
-  BaseBadRequestError,
   BaseConflictError,
   BaseNotFoundError,
   BaseValidationError,
@@ -60,29 +59,5 @@ export class AccessDeniedError extends BaseAccessDeniedError<'AccessDenied'> {
   readonly scope = 'public';
   constructor() {
     super('Access denied');
-  }
-}
-
-export class InvalidAccessTokenError extends BaseBadRequestError<'InvalidAccessToken'> {
-  readonly code = 'InvalidAccessToken';
-  readonly scope = 'public';
-  constructor() {
-    super('Invalid access token');
-  }
-}
-
-export class ExpiredTokenError extends BaseBadRequestError<'ExpiredToken'> {
-  readonly code = 'ExpiredToken';
-  readonly scope = 'public';
-  constructor() {
-    super('Token expired');
-  }
-}
-
-export class MissingTokenError extends BaseBadRequestError<'MissingToken'> {
-  readonly code = 'MissingToken';
-  readonly scope = 'public';
-  constructor() {
-    super('Missing token');
   }
 }

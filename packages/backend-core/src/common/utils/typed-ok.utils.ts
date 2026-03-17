@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Ok, ok } from 'neverthrow';
 
-import { InvariantViolationException } from '@/error';
+import { InvariantViolationException } from '../error';
 
 export type TypedData<T extends string, D extends Record<string, unknown> & { type?: never }> = {
   type: T;
