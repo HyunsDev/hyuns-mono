@@ -55,4 +55,21 @@ export const MeRouter = c.router({
       roles: [UserRole.User, UserRole.Admin],
     },
   }),
+
+  delete: c.mutation({
+    summary: '로그인한 유저의 계정을 삭제합니다',
+    description: 'Deletes the account of the currently authenticated user.',
+    method: 'DELETE',
+    path: '/me',
+    body: c.noBody(),
+    responses: {
+      ...createOkResponseSchema({
+        data: UserDtoSchema,
+      }),
+      ...createErrorResponseSchemas([ApiErrors.UserNotFound, ApiErrors.AdminCannotBeDeleted]),
+    },
+    metadata: {
+      roles: [UserRole.User, UserRole.Admin],
+    },
+  }),
 });
