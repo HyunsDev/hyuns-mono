@@ -70,6 +70,7 @@ export async function setupHttpApp(app: NestFastifyApplication, options: Bootstr
     app.enableCors({
       origin: true,
       credentials: true,
+      methods: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     });
   }
 
