@@ -2,15 +2,16 @@ import { UserBaseSchema } from './user.schemas';
 
 import type z from 'zod';
 
-export const UserDto = UserBaseSchema.pick({
+export const UserDtoSchema = UserBaseSchema.pick({
   id: true,
   email: true,
+  name: true,
   avatarUrl: true,
   role: true,
   status: true,
   createdAt: true,
 });
-export type UserDto = z.infer<typeof UserDto>;
+export type UserDto = z.infer<typeof UserDtoSchema>;
 
-export const UserDetailDto = UserBaseSchema;
-export type UserDetailDto = z.infer<typeof UserDetailDto>;
+export const UserDetailDtoSchema = UserBaseSchema;
+export type UserDetailDto = z.infer<typeof UserDetailDtoSchema>;
